@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>ESCOM Gruha Jyothi — Mobile Optimized</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:#f8fafc; --surface:#ffffff; --surface-2:#f8fafc; --border:#e2e8f0;
+      --text:#0f172a; --muted:#64748b; --faint:#94a3b8; --primary:#1e3a8a;
+      --process:#818cf8; --process-bg:#eef2ff; --decision:#fb923c; --decision-bg:#fff7ed;
+      --action:#2dd4bf; --action-bg:#f0fdfa; --end:#f87171; --end-bg:#fef2f2;
+      --shadow:0 8px 24px rgba(15,23,42,.06); --radius:18px;
+    }
+    * { box-sizing:border-box; }
+    html { scroll-behavior:smooth; -webkit-text-size-adjust:100%; }
+    body { margin:0; font-family:Inter,system-ui,sans-serif; background:var(--bg); color:var(--text); }
+
+    .shell { max-width:1440px; margin:0 auto; padding:24px; }
+    .hero { background:linear-gradient(180deg,#fff,#f8fbff); border:1px solid var(--border); border-radius:24px; padding:32px; box-shadow:var(--shadow); margin-bottom:24px; }
+    .eyebrow { display:inline-flex; align-items:center; padding:6px 12px; border-radius:999px; background:#dbeafe; color:#1d4ed8; font-size:12px; font-weight:700; }
+    h1 { margin:16px 0 8px; font-size:clamp(24px, 4vw, 32px); line-height:1.2; letter-spacing:-0.02em; }
+    .hero p { margin:0; max-width:70ch; color:var(--muted); font-size:15px; line-height:1.6; }
+    .toolbar { margin-top:24px; display:flex; flex-wrap:wrap; gap:12px; }
+
+    .btn { border:1px solid var(--border); background:#fff; color:var(--text); padding:0 18px; min-height:44px; display:inline-flex; align-items:center; justify-content:center; border-radius:12px; font:600 14px Inter,system-ui,sans-serif; cursor:pointer; transition:all 0.2s; white-space:nowrap; }
+    .btn:active { transform:scale(0.98); }
+    .btn.primary { background:var(--primary); color:#fff; border-color:var(--primary); }
+
+    .topnav { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:16px; margin-bottom:24px; }
+    .navcard { text-decoration:none; color:inherit; background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:16px; box-shadow:var(--shadow); display:flex; flex-direction:column; transition:transform 0.2s; }
+    .navcard:active { transform:scale(0.98); }
+    .navcard small { color:var(--faint); font-weight:800; text-transform:uppercase; letter-spacing:.08em; font-size:11px; }
+    .navcard strong { display:block; margin:8px 0 4px; font-size:15px; }
+    .navcard span { color:var(--muted); font-size:13px; line-height:1.45; }
+
+    .grid { display:grid; grid-template-columns:1fr 1fr; gap:24px; }
+    .card { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); overflow:hidden; box-shadow:var(--shadow); display:flex; flex-direction:column; }
+    .card-head { display:flex; justify-content:space-between; gap:16px; align-items:flex-start; padding:20px; border-bottom:1px solid var(--border); background:linear-gradient(180deg,#fff,#fbfdff); flex-wrap:wrap; }
+    .pill { display:inline-block; padding:5px 12px; border-radius:999px; background:var(--process-bg); color:var(--primary); font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:0.04em; }
+    .card h2 { margin:12px 0 6px; font-size:20px; }
+    .card p { margin:0; color:var(--muted); font-size:14px; line-height:1.55; max-width:58ch; }
+    .copy-btn { border:1px solid var(--border); background:var(--surface-2); color:var(--text); padding:0 14px; min-height:40px; display:inline-flex; align-items:center; justify-content:center; border-radius:10px; font:600 13px Inter,system-ui,sans-serif; cursor:pointer; flex-shrink:0; }
+
+    .diagram-wrap { padding:20px; overflow:auto; max-height:none; background:radial-gradient(circle at top right,#f8fbff,transparent 28%), linear-gradient(180deg,#fff,#fbfdff); flex:1; -webkit-overflow-scrolling:touch; }
+    .diagram-wrap .mermaid { display: flex; justify-content: center; min-width: 0; }
+    .diagram-wrap svg { display:block; max-width:none !important; overflow:visible; margin: 0 auto; }
+
+    .legend { display:flex; flex-wrap:wrap; gap:16px; align-items:center; padding:16px 20px; border-top:1px solid var(--border); background:#fcfdff; }
+    .legend-title { color:var(--faint); font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:.08em; }
+    .li { display:inline-flex; align-items:center; gap:8px; color:var(--muted); font-size:12px; font-weight:500; }
+    .sw { width:14px; height:14px; border:2px solid; border-radius:4px; display:inline-block; }
+    .sw.process { background:var(--process-bg); border-color:var(--process); }
+    .sw.decision { background:var(--decision-bg); border-color:var(--decision); border-radius:999px; }
+    .sw.action { background:var(--action-bg); border-color:var(--action); }
+    .sw.end { background:var(--end-bg); border-color:var(--end); border-radius:999px; }
+
+    .footer { text-align:center; color:var(--faint); font-size:13px; padding:32px 0 16px; }
+
+
+    /* FIX MERMAID FOREIGN_OBJECT CLIPPING */
+    .diagram-wrap svg foreignObject { 
+      overflow: visible !important;
+    }
+    .diagram-wrap svg foreignObject div, 
+    .diagram-wrap svg foreignObject p, 
+    .diagram-wrap svg foreignObject span {
+      overflow: visible !important;
+      white-space: nowrap !important;
+      line-height: 1.3 !important;
+    }
+    /* Increase node box minimums slightly using css scale */
+    .diagram-wrap svg .node { 
+      overflow: visible !important;
+    }
+
+    /* TABLET OPTIMIZATION */
+    @media (max-width: 1100px) {
+      .grid { grid-template-columns: 1fr; }
+      .topnav { grid-template-columns: 1fr 1fr; }
+    }
+
+    /* MOBILE OPTIMIZATION */
+    @media (max-width: 768px) {
+      .shell { padding: 12px; }
+      .hero { padding: 28px; border-radius: 20px; margin-bottom: 20px; }
+      .hero p { font-size: 14px; }
+
+      /* Carousel style nav for mobile */
+      .topnav { 
+        display: flex; 
+        overflow-x: auto; 
+        scroll-snap-type: x mandatory; 
+        padding-bottom: 12px; 
+        margin-bottom: 16px; 
+        scrollbar-width: none; 
+        -ms-overflow-style: none; 
+        gap: 12px;
+      }
+      .topnav::-webkit-scrollbar { display: none; }
+      .navcard { flex: 0 0 85%; scroll-snap-align: start; padding: 16px; }
+
+      .card-head { padding: 16px; flex-direction: column; gap: 16px; }
+      .copy-btn { width: 100%; min-height: 44px; } /* 44px tap target for mobile */
+      .diagram-wrap { padding: 12px; }
+      .legend { padding: 16px; gap: 12px; }
+
+      /* Ensure SVG stays legible on small screens */
+      .diagram-wrap svg { display:block; max-width:none !important; overflow:visible; margin: 0 auto; }
+    }
+
+    @media print {
+      .toolbar, .topnav, .copy-btn { display: none !important; }
+      .grid { grid-template-columns: 1fr; gap: 40px; }
+      .card { break-inside: avoid; page-break-inside: avoid; margin-bottom: 0; box-shadow: none; border-color: #000; }
+      body { background: #fff; color: #000; }
+      .shell { padding: 0; max-width: none; }
+      .hero { box-shadow: none; border-radius: 0; border: none; padding: 0 0 24px; }
+      .diagram-wrap { max-height: none; overflow: visible; padding: 0; background: none; }
+      .diagram-wrap svg { display:block; max-width:none !important; overflow:visible; margin: 0 auto; }
+      .legend { border-color: #000; background: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <section class="hero">
+      <span class="eyebrow">Mobile Optimized • 4 Phases</span>
+      <h1>ESCOM Gruha Jyothi Consumer Registration</h1>
+      <p>This layout uses tailored breakpoints for tablets and phones. Diagrams stay completely legible via horizontal swipe on small screens, and touch targets meet the 44px minimum standard.</p>
+      <div class="toolbar">
+        <button class="btn primary" onclick="window.print()">Print / Save PDF</button>
+        <button class="btn" id="expandAll">Expand all views</button>
+      </div>
+    </section>
+
+    <nav class="topnav">
+      <a class="navcard" href="#identity"><small>Phase 1</small><strong>Identity Lookup</strong><span>Consumer lookup and auto-populated records.</span></a>
+      <a class="navcard" href="#otp"><small>Phase 2</small><strong>OTP & Mobile Validation</strong><span>Aadhaar OTP and linked mobile verification path.</span></a>
+      <a class="navcard" href="#docs"><small>Phase 3</small><strong>Relationship & Documents</strong><span>Ownership, voter, and document collection.</span></a>
+      <a class="navcard" href="#submit"><small>Phase 4</small><strong>Declaration & Submission</strong><span>Final checks, PAN path, and submission.</span></a>
+    </nav>
+
+    <div class="grid">
+      <section class="card" id="identity">
+      <div class="card-head">
+        <div>
+          <span class="pill">Phase 1</span>
+          <h2>Identity Lookup</h2>
+          <p>Consumer identification and auto-populated account details before consent check.</p>
+        </div>
+        <button class="copy-btn" data-copy="mmd-identity">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:6px"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+          Copy
+        </button>
+      </div>
+      <div class="diagram-wrap">
+        <div class="mermaid" id="mmd-identity">---
+config:
+  layout: elk
+  theme: base
+  themeVariables:
+    fontSize: 14px
+    fontFamily: &quot;Inter, system-ui, sans-serif&quot;
+    primaryColor: &quot;#1e3a8a&quot;
+    primaryTextColor: &quot;#1e3a8a&quot;
+    primaryBorderColor: &quot;#1e40af&quot;
+    lineColor: &quot;#475569&quot;
+    secondaryColor: &quot;#f8fafc&quot;
+    tertiaryColor: &quot;#e2e8f0&quot;
+    background: &quot;white&quot;
+    mainBkg: &quot;white&quot;
+    clusterBkg: &quot;#f8fafc&quot;
+    edgeLabelBackground: &quot;white&quot;
+  flowchart:
+    curve: basis
+    padding: 28
+    nodeSpacing: 80
+    rankSpacing: 100
+    diagramPadding: 40
+---
+flowchart TB
+    Start([&quot;Start&quot;]) --&gt; SelectESCOM[&quot;Select ESCOM Dropdown&quot;]
+    SelectESCOM --&gt; AccountID[&quot;Enter Account ID&lt;br/&gt;10-digit consumer number&quot;]
+    AccountID --&gt; AccountHolder[&quot;Account Holder Name&lt;br/&gt;Auto-populated&quot;]
+    AccountHolder --&gt; Address[&quot;Address&lt;br/&gt;Auto-populated&quot;]
+    Address --&gt; AadhaarName[&quot;Aadhaar Name &amp; Number&lt;br/&gt;Auto-populated&quot;]
+    AadhaarName --&gt; MobileNumber[&quot;GJY Registered Mobile&lt;br/&gt;Linked to Aadhaar&quot;]
+    MobileNumber --&gt; Declaration{&quot;Above details pertain to me?&quot;}
+    classDef processNode stroke:#818cf8,fill:#eef2ff,stroke-width:2px,color:#1e3a8a
+    classDef decisionNode stroke:#fb923c,fill:#fff7ed,stroke-width:2px,color:#9a3412
+    classDef endNode stroke:#f87171,fill:#fef2f2,stroke-width:2px,color:#b91c1c
+    class Start endNode
+    class SelectESCOM,AccountID,AccountHolder,Address,AadhaarName,MobileNumber processNode
+    class Declaration decisionNode</div>
+      </div>
+      <div class="legend">
+        <span class="legend-title">Legend</span>
+        <span class="li"><i class="sw process"></i>Process</span>
+        <span class="li"><i class="sw decision"></i>Decision</span>
+        <span class="li"><i class="sw action"></i>Action</span>
+        <span class="li"><i class="sw end"></i>Start / End</span>
+      </div>
+    </section><section class="card" id="otp">
+      <div class="card-head">
+        <div>
+          <span class="pill">Phase 2</span>
+          <h2>OTP & Mobile Validation</h2>
+          <p>Aadhaar verification, OTP loop, invalid OTP handling, and optional linked mobile update.</p>
+        </div>
+        <button class="copy-btn" data-copy="mmd-otp">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:6px"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+          Copy
+        </button>
+      </div>
+      <div class="diagram-wrap">
+        <div class="mermaid" id="mmd-otp">---
+config:
+  layout: elk
+  theme: base
+  themeVariables:
+    fontSize: 14px
+    fontFamily: &quot;Inter, system-ui, sans-serif&quot;
+    primaryColor: &quot;#1e3a8a&quot;
+    primaryTextColor: &quot;#1e3a8a&quot;
+    primaryBorderColor: &quot;#1e40af&quot;
+    lineColor: &quot;#475569&quot;
+    secondaryColor: &quot;#f8fafc&quot;
+    tertiaryColor: &quot;#e2e8f0&quot;
+    background: &quot;white&quot;
+    mainBkg: &quot;white&quot;
+    clusterBkg: &quot;#f8fafc&quot;
+    edgeLabelBackground: &quot;white&quot;
+  flowchart:
+    curve: basis
+    padding: 28
+    nodeSpacing: 80
+    rankSpacing: 100
+    diagramPadding: 40
+---
+flowchart TB
+    Declaration{&quot;Above details pertain to me?&quot;} -- No --&gt; EnterAadhaar[&quot;Enter 12-digit Aadhaar Number&quot;]
+    EnterAadhaar --&gt; SendOTP[&quot;Send OTP&quot;]
+    Declaration -- Yes --&gt; SendOTP[&quot;Send OTP&quot;]
+    SendOTP --&gt; EnterOTP[&quot;Enter OTP sent to Aadhaar mobile&quot;]
+    EnterOTP --&gt; OTPValid{&quot;OTP valid?&quot;}
+    OTPValid -- No --&gt; InvalidOTP[&quot;Display Invalid OTP&quot;]
+    InvalidOTP --&gt; EnterOTP
+    OTPValid -- Yes --&gt; ChangeMobile{&quot;Change Gruha Jyothi linked mobile number?&quot;}
+    ChangeMobile -- Yes --&gt; NewMobile[&quot;Enter new mobile number&quot;]
+    NewMobile --&gt; NewOTP[&quot;Enter OTP&quot;]
+    ChangeMobile -- No --&gt; Phase2End([&quot;Proceed to Relationship Details&quot;])
+    NewOTP --&gt; Phase2End
+    classDef processNode stroke:#818cf8,fill:#eef2ff,stroke-width:2px,color:#1e3a8a
+    classDef decisionNode stroke:#fb923c,fill:#fff7ed,stroke-width:2px,color:#9a3412
+    classDef actionNode stroke:#2dd4bf,fill:#f0fdfa,stroke-width:2px,color:#0f766e
+    classDef endNode stroke:#f87171,fill:#fef2f2,stroke-width:2px,color:#b91c1c
+    class EnterAadhaar,SendOTP,EnterOTP,NewMobile,NewOTP processNode
+    class Declaration,OTPValid,ChangeMobile decisionNode
+    class InvalidOTP actionNode
+    class Phase2End endNode</div>
+      </div>
+      <div class="legend">
+        <span class="legend-title">Legend</span>
+        <span class="li"><i class="sw process"></i>Process</span>
+        <span class="li"><i class="sw decision"></i>Decision</span>
+        <span class="li"><i class="sw action"></i>Action</span>
+        <span class="li"><i class="sw end"></i>Start / End</span>
+      </div>
+    </section><section class="card" id="docs">
+      <div class="card-head">
+        <div>
+          <span class="pill">Phase 3</span>
+          <h2>Relationship & Documents</h2>
+          <p>Relationship classification, tenancy document handling, voter verification, and category branch.</p>
+        </div>
+        <button class="copy-btn" data-copy="mmd-docs">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:6px"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+          Copy
+        </button>
+      </div>
+      <div class="diagram-wrap">
+        <div class="mermaid" id="mmd-docs">---
+config:
+  layout: elk
+  theme: base
+  themeVariables:
+    fontSize: 14px
+    fontFamily: &quot;Inter, system-ui, sans-serif&quot;
+    primaryColor: &quot;#1e3a8a&quot;
+    primaryTextColor: &quot;#1e3a8a&quot;
+    primaryBorderColor: &quot;#1e40af&quot;
+    lineColor: &quot;#475569&quot;
+    secondaryColor: &quot;#f8fafc&quot;
+    tertiaryColor: &quot;#e2e8f0&quot;
+    background: &quot;white&quot;
+    mainBkg: &quot;white&quot;
+    clusterBkg: &quot;#f8fafc&quot;
+    edgeLabelBackground: &quot;white&quot;
+  flowchart:
+    curve: basis
+    padding: 28
+    nodeSpacing: 80
+    rankSpacing: 100
+    diagramPadding: 40
+---
+flowchart TB
+    Phase3Start([&quot;Relationship Details&quot;]) --&gt; SelectType[&quot;Select Relationship Owner / Tenant / Family Member&quot;]
+    SelectType --&gt; SelectTypeCheck{&quot;Selection&quot;}
+    SelectTypeCheck -- Tenant --&gt; TenancyDoc[&quot;Upload Tenancy Document&quot;]
+    TenancyDoc --&gt; RationCard[&quot;Ration Card Type APL / BPL / None&quot;]
+    SelectTypeCheck -- Owner --&gt; RationCard
+    SelectTypeCheck -- Family Member --&gt; RationCard
+    RationCard --&gt; ApplicantPhoto[&quot;Capture applicant photo&quot;]
+    ApplicantPhoto --&gt; VoterCheck{&quot;Registered voter of Karnataka?&quot;}
+    VoterCheck -- No --&gt; Category[&quot;Select Category SC / ST / OBC / Others&quot;]
+    VoterCheck -- Yes --&gt; VoterName[&quot;Enter name as per Voter ID&quot;]
+    VoterName --&gt; EPIC[&quot;Enter EPIC Number&quot;]
+    EPIC --&gt; VoterFront[&quot;Upload front photo of Voter ID&quot;]
+    VoterFront --&gt; VoterBack[&quot;Upload back photo of Voter ID&quot;]
+    VoterBack --&gt; Category
+    classDef processNode stroke:#818cf8,fill:#eef2ff,stroke-width:2px,color:#1e3a8a
+    classDef decisionNode stroke:#fb923c,fill:#fff7ed,stroke-width:2px,color:#9a3412
+    classDef endNode stroke:#f87171,fill:#fef2f2,stroke-width:2px,color:#b91c1c
+    class Phase3Start endNode
+    class SelectType,TenancyDoc,RationCard,ApplicantPhoto,VoterName,EPIC,VoterFront,VoterBack,Category processNode
+    class SelectTypeCheck,VoterCheck decisionNode</div>
+      </div>
+      <div class="legend">
+        <span class="legend-title">Legend</span>
+        <span class="li"><i class="sw process"></i>Process</span>
+        <span class="li"><i class="sw decision"></i>Decision</span>
+        <span class="li"><i class="sw action"></i>Action</span>
+        <span class="li"><i class="sw end"></i>Start / End</span>
+      </div>
+    </section><section class="card" id="submit">
+      <div class="card-head">
+        <div>
+          <span class="pill">Phase 4</span>
+          <h2>Declaration & Submission</h2>
+          <p>RD certificate, income tax decision, PAN capture, final declaration, and final submission.</p>
+        </div>
+        <button class="copy-btn" data-copy="mmd-submit">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:6px"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+          Copy
+        </button>
+      </div>
+      <div class="diagram-wrap">
+        <div class="mermaid" id="mmd-submit">---
+config:
+  layout: elk
+  theme: base
+  themeVariables:
+    fontSize: 14px
+    fontFamily: &quot;Inter, system-ui, sans-serif&quot;
+    primaryColor: &quot;#1e3a8a&quot;
+    primaryTextColor: &quot;#1e3a8a&quot;
+    primaryBorderColor: &quot;#1e40af&quot;
+    lineColor: &quot;#475569&quot;
+    secondaryColor: &quot;#f8fafc&quot;
+    tertiaryColor: &quot;#e2e8f0&quot;
+    background: &quot;white&quot;
+    mainBkg: &quot;white&quot;
+    clusterBkg: &quot;#f8fafc&quot;
+    edgeLabelBackground: &quot;white&quot;
+  flowchart:
+    curve: basis
+    padding: 28
+    nodeSpacing: 80
+    rankSpacing: 100
+    diagramPadding: 40
+---
+flowchart TB
+    Category[&quot;Select Category SC / ST / OBC / Others&quot;] --&gt; RDCert[&quot;Enter RD Certificate Number&quot;]
+    RDCert --&gt; IncomeTax{&quot;Income Tax payer?&quot;}
+    IncomeTax -- Yes --&gt; PAN[&quot;Enter PAN Alphanumeric&quot;]
+    IncomeTax -- No --&gt; PAN
+    PAN --&gt; FinalDeclaration[&quot;Declare I am a domestic consumer and details are true&quot;]
+    FinalDeclaration --&gt; Submit[&quot;Submit Application&quot;]
+    Submit --&gt; End([&quot;End&quot;])
+    classDef processNode stroke:#818cf8,fill:#eef2ff,stroke-width:2px,color:#1e3a8a
+    classDef decisionNode stroke:#fb923c,fill:#fff7ed,stroke-width:2px,color:#9a3412
+    classDef actionNode stroke:#2dd4bf,fill:#f0fdfa,stroke-width:2px,color:#0f766e
+    classDef endNode stroke:#f87171,fill:#fef2f2,stroke-width:2px,color:#b91c1c
+    class Category,RDCert,PAN,FinalDeclaration processNode
+    class IncomeTax decisionNode
+    class Submit actionNode
+    class End endNode</div>
+      </div>
+      <div class="legend">
+        <span class="legend-title">Legend</span>
+        <span class="li"><i class="sw process"></i>Process</span>
+        <span class="li"><i class="sw decision"></i>Decision</span>
+        <span class="li"><i class="sw action"></i>Action</span>
+        <span class="li"><i class="sw end"></i>Start / End</span>
+      </div>
+    </section>
+    </div>
+
+    <div class="footer">Rendered from exported Mermaid sources • ESCOM Gruha Jyothi • Mobile UI optimized</div>
+  </div>
+
+  <script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+    import elkLayouts from 'https://cdn.jsdelivr.net/npm/@mermaid-js/layout-elk@0/dist/mermaid-layout-elk.esm.min.mjs';
+    mermaid.registerLayoutLoaders(elkLayouts);
+    mermaid.initialize({startOnLoad:false,securityLevel:'loose',flowchart:{useMaxWidth:false,htmlLabels:false}});
+    await mermaid.run({querySelector:'.mermaid'});
+
+    document.querySelectorAll('.mermaid svg').forEach(svg => {
+      // Lock SVG to its exact intrinsic layout width to standardize physical scale across all phases
+      const vb = svg.getAttribute('viewBox');
+      if (vb) {
+        const w = vb.split(' ')[2];
+        svg.style.width = w + 'px';
+        svg.style.minWidth = w + 'px';
+      } else {
+        svg.style.width = 'auto';
+      }
+      svg.style.height = 'auto';
+      svg.style.maxWidth = 'none';
+      svg.style.overflow = 'visible';
+    });
+
+    document.querySelectorAll('.copy-btn').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const el = document.getElementById(btn.dataset.copy); 
+        const txt = el ? el.textContent : '';
+        try {
+          await navigator.clipboard.writeText(txt);
+          const old = btn.innerHTML; 
+          btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:6px"><polyline points="20 6 9 17 4 12"></polyline></svg>Copied';
+          setTimeout(() => btn.innerHTML = old, 1200);
+        } catch(e) {
+          btn.textContent = 'Copy failed'; 
+          setTimeout(() => btn.textContent = 'Copy', 1200);
+        }
+      });
+    });
+
+    document.getElementById('expandAll')?.addEventListener('click', () => {
+      document.querySelectorAll('.diagram-wrap').forEach(el => { 
+        el.style.maxHeight = 'none'; 
+      });
+    });
+  </script>
+</body>
+</html>
