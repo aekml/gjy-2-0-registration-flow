@@ -85,10 +85,33 @@
       overflow: visible !important;
     }
 
+
+    .overview-panel, .phase-panel { border:1px solid var(--border); border-radius:22px; background:var(--surface); box-shadow:0 16px 40px rgba(15,23,42,.07); }
+    .overview { margin-bottom:24px; }
+    .overview-panel summary, .phase-panel summary { list-style:none; cursor:pointer; }
+    .overview-panel summary::-webkit-details-marker, .phase-panel summary::-webkit-details-marker { display:none; }
+    .overview-panel > summary { display:flex; align-items:center; justify-content:space-between; gap:16px; padding:20px 22px; background:linear-gradient(180deg,#fff,#fbfdff); border-radius:22px; }
+    .overview-title { margin:8px 0 0; font-size:20px; line-height:1.3; }
+    .eyebrow--soft { background:#eef4ff; color:#3157c8; }
+    .summary-hint { color:var(--muted); font-size:13px; font-weight:600; white-space:nowrap; }
+    .overview-panel[open] > summary { border-bottom:1px solid var(--border); border-bottom-left-radius:0; border-bottom-right-radius:0; }
+    .overview-panel .topnav { padding:18px; margin-bottom:0; }
+
+    .card--accordion { overflow:visible; box-shadow:none; border:none; background:transparent; }
+    .phase-panel[open] .accordion-head { border-bottom:1px solid var(--border); border-bottom-left-radius:0; border-bottom-right-radius:0; }
+    .accordion-head { position:relative; padding-right:58px; }
+    .accordion-body { background:var(--surface); border-bottom-left-radius:22px; border-bottom-right-radius:22px; overflow:hidden; }
+    .accordion-icon { position:absolute; top:20px; right:20px; width:28px; height:28px; border-radius:999px; border:1px solid var(--border); background:#fff; box-shadow:0 4px 12px rgba(15,23,42,.06); }
+    .accordion-icon::before, .accordion-icon::after { content:""; position:absolute; top:50%; left:50%; width:12px; height:2px; background:#475569; border-radius:999px; transform:translate(-50%,-50%); }
+    .accordion-icon::after { transform:translate(-50%,-50%) rotate(90deg); transition:transform .2s ease; }
+    .phase-panel[open] .accordion-icon::after { transform:translate(-50%,-50%) rotate(0deg); }
+    .phase-panel[open] .accordion-icon, .overview-panel[open] .summary-hint { color:#1e3a8a; }
+    .card-head.accordion-head { margin:0; }
+
     /* TABLET OPTIMIZATION */
     @media (max-width: 1100px) {
       .grid { grid-template-columns: 1fr; }
-      .topnav { grid-template-columns: 1fr 1fr; }
+      .topnav { grid-template-columns: 1fr; }
     }
 
     /* MOBILE OPTIMIZATION */
@@ -97,19 +120,10 @@
       .hero { padding: 28px; border-radius: 20px; margin-bottom: 20px; }
       .hero p { font-size: 14px; }
 
-      /* Carousel style nav for mobile */
-      .topnav { 
-        display: flex; 
-        overflow-x: auto; 
-        scroll-snap-type: x mandatory; 
-        padding-bottom: 12px; 
-        margin-bottom: 16px; 
-        scrollbar-width: none; 
-        -ms-overflow-style: none; 
-        gap: 12px;
-      }
-      .topnav::-webkit-scrollbar { display: none; }
-      .navcard { flex: 0 0 85%; scroll-snap-align: start; padding: 16px; }
+      .topnav { display:grid; grid-template-columns:1fr; gap:12px; padding:14px; margin-bottom:0; }
+      .navcard { padding: 16px; min-height:auto; }
+      .overview-panel > summary { padding:16px; align-items:flex-start; flex-direction:column; }
+      .summary-hint { font-size:12px; }
 
       .card-head { padding: 16px; flex-direction: column; gap: 16px; }
       .copy-btn { width: 100%; min-height: 44px; } /* 44px tap target for mobile */
@@ -157,16 +171,28 @@
       </div>
     </section>
 
-    <nav class="topnav">
-      <a class="navcard" href="#identity"><span class="phase-badge">1</span><small>Phase 1</small><strong>Identity Lookup</strong><span>Consumer lookup and auto-populated records.</span></a>
-      <a class="navcard" href="#otp"><span class="phase-badge">2</span><small>Phase 2</small><strong>OTP & Mobile Validation</strong><span>Aadhaar OTP and linked mobile verification path.</span></a>
-      <a class="navcard" href="#docs"><span class="phase-badge">3</span><small>Phase 3</small><strong>Relationship & Documents</strong><span>Ownership, voter, and document collection.</span></a>
-      <a class="navcard" href="#submit"><span class="phase-badge">4</span><small>Phase 4</small><strong>Declaration & Submission</strong><span>Final checks, PAN path, and submission.</span></a>
-    </nav>
+    <section class="overview" aria-label="Flow overview">
+      <details class="overview-panel" open>
+        <summary>
+          <div>
+            <span class="eyebrow eyebrow--soft">Flow overview</span>
+            <h2 class="overview-title">Registration journey by phase</h2>
+          </div>
+          <span class="summary-hint">Tap to collapse</span>
+        </summary>
+        <div class="topnav">
+          <a class="navcard" href="#identity"><span class="phase-badge">1</span><small>Phase 1</small><strong>Identity Lookup</strong><span>Consumer lookup and auto-populated records.</span></a>
+          <a class="navcard" href="#otp"><span class="phase-badge">2</span><small>Phase 2</small><strong>OTP & Mobile Validation</strong><span>Aadhaar OTP and linked mobile verification path.</span></a>
+          <a class="navcard" href="#docs"><span class="phase-badge">3</span><small>Phase 3</small><strong>Relationship & Documents</strong><span>Ownership, voter, and document collection.</span></a>
+          <a class="navcard" href="#submit"><span class="phase-badge">4</span><small>Phase 4</small><strong>Declaration & Submission</strong><span>Final checks, PAN path, and submission.</span></a>
+        </div>
+      </details>
+    </section>
 
     <div class="grid">
-      <section class="card" id="identity">
-      <div class="card-head">
+      <section class="card card--accordion" id="identity">
+      <details class="phase-panel" open>
+        <summary class="card-head accordion-head">
         <div>
           <span class="pill">Phase 1</span>
           <h2>Identity Lookup</h2>
@@ -176,8 +202,9 @@
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:6px"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
           Copy
         </button>
-      </div>
-      <div class="diagram-wrap">
+      <span class="accordion-icon" aria-hidden="true"></span></summary>
+        <div class="accordion-body">
+          <div class="diagram-wrap">
         <div class="mermaid" id="mmd-identity">---
 config:
   layout: elk
@@ -217,15 +244,18 @@ flowchart TB
     class SelectESCOM,AccountID,AccountHolder,Address,AadhaarName,MobileNumber processNode
     class Declaration decisionNode</div>
       </div>
-      <div class="legend">
+          <div class="legend">
         <span class="legend-title">Legend</span>
         <span class="li"><i class="sw process"></i>Process</span>
         <span class="li"><i class="sw decision"></i>Decision</span>
         <span class="li"><i class="sw action"></i>Action</span>
         <span class="li"><i class="sw end"></i>Start / End</span>
       </div>
-    </section><section class="card" id="otp">
-      <div class="card-head">
+        </div>
+      </details>
+    </section><section class="card card--accordion" id="otp">
+      <details class="phase-panel">
+        <summary class="card-head accordion-head">
         <div>
           <span class="pill">Phase 2</span>
           <h2>OTP & Mobile Validation</h2>
@@ -235,8 +265,9 @@ flowchart TB
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:6px"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
           Copy
         </button>
-      </div>
-      <div class="diagram-wrap">
+      <span class="accordion-icon" aria-hidden="true"></span></summary>
+        <div class="accordion-body">
+          <div class="diagram-wrap">
         <div class="mermaid" id="mmd-otp">---
 config:
   layout: elk
@@ -283,15 +314,18 @@ flowchart TB
     class InvalidOTP actionNode
     class Phase2End endNode</div>
       </div>
-      <div class="legend">
+          <div class="legend">
         <span class="legend-title">Legend</span>
         <span class="li"><i class="sw process"></i>Process</span>
         <span class="li"><i class="sw decision"></i>Decision</span>
         <span class="li"><i class="sw action"></i>Action</span>
         <span class="li"><i class="sw end"></i>Start / End</span>
       </div>
-    </section><section class="card" id="docs">
-      <div class="card-head">
+        </div>
+      </details>
+    </section><section class="card card--accordion" id="docs">
+      <details class="phase-panel">
+        <summary class="card-head accordion-head">
         <div>
           <span class="pill">Phase 3</span>
           <h2>Relationship & Documents</h2>
@@ -301,8 +335,9 @@ flowchart TB
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:6px"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
           Copy
         </button>
-      </div>
-      <div class="diagram-wrap">
+      <span class="accordion-icon" aria-hidden="true"></span></summary>
+        <div class="accordion-body">
+          <div class="diagram-wrap">
         <div class="mermaid" id="mmd-docs">---
 config:
   layout: elk
@@ -349,15 +384,18 @@ flowchart TB
     class SelectType,TenancyDoc,RationCard,ApplicantPhoto,VoterName,EPIC,VoterFront,VoterBack,Category processNode
     class SelectTypeCheck,VoterCheck decisionNode</div>
       </div>
-      <div class="legend">
+          <div class="legend">
         <span class="legend-title">Legend</span>
         <span class="li"><i class="sw process"></i>Process</span>
         <span class="li"><i class="sw decision"></i>Decision</span>
         <span class="li"><i class="sw action"></i>Action</span>
         <span class="li"><i class="sw end"></i>Start / End</span>
       </div>
-    </section><section class="card" id="submit">
-      <div class="card-head">
+        </div>
+      </details>
+    </section><section class="card card--accordion" id="submit">
+      <details class="phase-panel">
+        <summary class="card-head accordion-head">
         <div>
           <span class="pill">Phase 4</span>
           <h2>Declaration & Submission</h2>
@@ -367,8 +405,9 @@ flowchart TB
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:6px"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
           Copy
         </button>
-      </div>
-      <div class="diagram-wrap">
+      <span class="accordion-icon" aria-hidden="true"></span></summary>
+        <div class="accordion-body">
+          <div class="diagram-wrap">
         <div class="mermaid" id="mmd-submit">---
 config:
   layout: elk
@@ -411,13 +450,15 @@ flowchart TB
     class Submit actionNode
     class End endNode</div>
       </div>
-      <div class="legend">
+          <div class="legend">
         <span class="legend-title">Legend</span>
         <span class="li"><i class="sw process"></i>Process</span>
         <span class="li"><i class="sw decision"></i>Decision</span>
         <span class="li"><i class="sw action"></i>Action</span>
         <span class="li"><i class="sw end"></i>Start / End</span>
       </div>
+        </div>
+      </details>
     </section>
     </div>
 
@@ -463,9 +504,8 @@ flowchart TB
     });
 
     document.getElementById('expandAll')?.addEventListener('click', () => {
-      document.querySelectorAll('.diagram-wrap').forEach(el => { 
-        el.style.maxHeight = 'none'; 
-      });
+      document.querySelectorAll('.phase-panel').forEach(el => el.open = true);
+      document.querySelectorAll('.diagram-wrap').forEach(el => { el.style.maxHeight = 'none'; });
     });
   </script>
 </body>
