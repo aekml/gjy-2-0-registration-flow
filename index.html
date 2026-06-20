@@ -143,14 +143,15 @@
 
     @media print {
       .toolbar, .topnav, .copy-btn { display: none !important; }
-      .grid { grid-template-columns: 1fr; gap: 40px; }
-      .card { break-inside: avoid; page-break-inside: avoid; margin-bottom: 0; box-shadow: none; border-color: #000; }
+      .grid { grid-template-columns: 1fr; gap: 0; }
+      .card { break-before: page; break-after: auto; break-inside: avoid; page-break-before: always; page-break-inside: avoid; margin: 0 0 0; padding: 12px 0 24px; box-shadow: none; border-color: #000; border-radius: 0; }
+      .card:first-of-type { break-before: auto; page-break-before: auto; }
       body { background: #fff; color: #000; }
       .shell { padding: 0; max-width: none; }
-      .hero { box-shadow: none; border-radius: 0; border: none; padding: 0 0 24px; }
+      .hero { box-shadow: none; border-radius: 0; border: none; padding: 0 0 16px; margin: 0 0 8px; }
       .diagram-wrap { max-height: none; overflow: visible; padding: 0; background: none; }
       .diagram-wrap svg { display:block; max-width: 100%; overflow:visible; margin: 0 auto; }
-      .legend { border-color: #000; background: none; }
+      .legend { border-color: #000; background: none; padding-top: 4px; }
     }
   </style>
 </head>
@@ -166,7 +167,13 @@
         <span class="meta-chip">Print-ready</span>
       </div>
       <div class="toolbar">
-        <button class="btn primary" onclick="window.print()">Print / Save PDF</button>
+        <button class="btn primary" onclick="(function(){
+          const overview = document.querySelector('.overview-panel');
+          if (overview) overview.open = true;
+          document.querySelectorAll('.phase-panel').forEach(el => el.open = true);
+          document.querySelectorAll('.diagram-wrap').forEach(el => { el.style.maxHeight = 'none'; });
+          setTimeout(() => window.print(), 50);
+        })()">Print / Save PDF</button>
         <button class="btn" id="expandAll">Expand all views</button>
       </div>
     </section>
@@ -178,7 +185,7 @@
             <span class="eyebrow eyebrow--soft">Flow overview</span>
             <h2 class="overview-title">Registration journey by phase</h2>
           </div>
-          <span class="summary-hint">Tap to Expand</span>
+          <span class="summary-hint">Tap to collapse</span>
         </summary>
         <div class="topnav">
           <a class="navcard" href="#identity"><span class="phase-badge">1</span><small>Phase 1</small><strong>Identity Lookup</strong><span>Consumer lookup and auto-populated records.</span></a>
@@ -520,13 +527,19 @@ flowchart TB
       });
     });
 
-    document.getElementById('expandAll')?.addEventListener('click', () => {
-      const first = document.querySelector('.phase-panel');
-      document.querySelectorAll('.phase-panel').forEach((el, idx) => {
-        el.open = idx === 0;
+    const expandBtn = document.getElementById('expandAll');
+    let allExpanded = false;
+    expandBtn?.addEventListener('click', () => {
+      allExpanded = !allExpanded;
+      const overview = document.querySelector('.overview-panel');
+      if (overview) overview.open = allExpanded;
+      document.querySelectorAll('.phase-panel').forEach(el => {
+        el.open = allExpanded;
       });
-      document.querySelectorAll('.diagram-wrap').forEach(el => { el.style.maxHeight = 'none'; });
-      first?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      expandBtn.textContent = allExpanded ? 'Collapse all views' : 'Expand all views';
+      if (allExpanded) {
+        document.querySelectorAll('.diagram-wrap').forEach(el => { el.style.maxHeight = 'none'; });
+      }
     });
   </script>
 </body>
