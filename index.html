@@ -53,7 +53,7 @@
     .card p { margin:0; color:var(--muted); font-size:14px; line-height:1.55; max-width:58ch; }
     .copy-btn { border:1px solid var(--border); background:var(--surface-2); color:var(--text); padding:0 14px; min-height:40px; display:inline-flex; align-items:center; justify-content:center; border-radius:10px; font:600 13px Inter,system-ui,sans-serif; cursor:pointer; flex-shrink:0; }
 
-    .diagram-wrap { padding:20px; overflow:auto; max-height:none; background:radial-gradient(circle at top right,#f8fbff,transparent 28%), linear-gradient(180deg,#fff,#fbfdff); flex:1; -webkit-overflow-scrolling:touch; }
+    .diagram-wrap { padding:20px; overflow:auto; max-height:none; background:radial-gradient(circle at top right,#f8fbff,transparent 28%), linear-gradient(180deg,#fff,#fbfdff); flex:1; -webkit-overflow-scrolling:touch; overscroll-behavior: contain; }
     .diagram-wrap .mermaid { display: flex; justify-content: center; min-width: 0; }
     .diagram-wrap svg { display:block; max-width: 100%; overflow:visible; margin: 0 auto; }
 
@@ -178,7 +178,7 @@
             <span class="eyebrow eyebrow--soft">Flow overview</span>
             <h2 class="overview-title">Registration journey by phase</h2>
           </div>
-          <span class="summary-hint">Tap to collapse</span>
+          <span class="summary-hint">Tap to Expand</span>
         </summary>
         <div class="topnav">
           <a class="navcard" href="#identity"><span class="phase-badge">1</span><small>Phase 1</small><strong>Identity Lookup</strong><span>Consumer lookup and auto-populated records.</span></a>
@@ -506,8 +506,15 @@ flowchart TB
     document.querySelectorAll('.phase-panel').forEach(panel => {
       panel.addEventListener('toggle', () => {
         if (panel.open) {
+          const summary = panel.querySelector('summary');
+          const top = window.scrollY;
           document.querySelectorAll('.phase-panel').forEach(other => {
             if (other !== panel) other.open = false;
+          });
+          requestAnimationFrame(() => {
+            const summaryTop = summary.getBoundingClientRect().top + window.scrollY;
+            const offset = 16;
+            window.scrollTo({ top: Math.max(summaryTop - offset, 0), behavior: 'auto' });
           });
         }
       });
