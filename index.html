@@ -47,7 +47,7 @@
 
     .diagram-wrap { padding:20px; overflow:auto; max-height:none; background:radial-gradient(circle at top right,#f8fbff,transparent 28%), linear-gradient(180deg,#fff,#fbfdff); flex:1; -webkit-overflow-scrolling:touch; }
     .diagram-wrap .mermaid { display: flex; justify-content: center; min-width: 0; }
-    .diagram-wrap svg { display:block; max-width:none !important; overflow:visible; margin: 0 auto; }
+    .diagram-wrap svg { display:block; max-width: 100%; overflow:visible; margin: 0 auto; min-width: 600px; }
 
     .legend { display:flex; flex-wrap:wrap; gap:16px; align-items:center; padding:16px 20px; border-top:1px solid var(--border); background:#fcfdff; }
     .legend-title { color:var(--faint); font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:.08em; }
@@ -109,7 +109,7 @@
       .legend { padding: 16px; gap: 12px; }
 
       /* Ensure SVG stays legible on small screens */
-      .diagram-wrap svg { display:block; max-width:none !important; overflow:visible; margin: 0 auto; }
+      .diagram-wrap svg { display:block; max-width: 100%; overflow:visible; margin: 0 auto; min-width: 600px; }
     }
 
     @media print {
@@ -120,7 +120,7 @@
       .shell { padding: 0; max-width: none; }
       .hero { box-shadow: none; border-radius: 0; border: none; padding: 0 0 24px; }
       .diagram-wrap { max-height: none; overflow: visible; padding: 0; background: none; }
-      .diagram-wrap svg { display:block; max-width:none !important; overflow:visible; margin: 0 auto; }
+      .diagram-wrap svg { display:block; max-width: 100%; overflow:visible; margin: 0 auto; min-width: 600px; }
       .legend { border-color: #000; background: none; }
     }
   </style>
@@ -375,17 +375,18 @@ config:
 ---
 flowchart TB
     Category[&quot;Select Category SC / ST / OBC / Others&quot;] --&gt; RDCert[&quot;Enter RD Certificate Number&quot;]
-    RDCert --&gt; IncomeTax{&quot;Income Tax payer?&quot;}
-    IncomeTax -- Yes --&gt; PAN[&quot;Enter PAN Alphanumeric&quot;]
-    IncomeTax -- No --&gt; PAN
-    PAN --&gt; FinalDeclaration[&quot;Declare I am a domestic consumer and details are true&quot;]
+    RDCert --&gt; IncomeTax{&quot;Income Tax&lt;br/&gt;Payer?&quot;}
+    IncomeTax -- Yes --&gt; PANMANDATORY[&quot;Enter PAN&lt;br/&gt;Mandatory&quot;]
+    IncomeTax -- No --&gt; PANOPTIONAL[&quot;Enter PAN&lt;br/&gt;(If Available)&quot;]
+    PANMANDATORY --&gt; FinalDeclaration[&quot;Declaration : I am a Domestic&lt;br/&gt;consumer &amp; details submitted are correct&quot;]
+    PANOPTIONAL --&gt; FinalDeclaration[&quot;Declaration : I am a Domestic&lt;br/&gt;consumer &amp; details submitted are correct&quot;]
     FinalDeclaration --&gt; Submit[&quot;Submit Application&quot;]
     Submit --&gt; End([&quot;End&quot;])
     classDef processNode stroke:#818cf8,fill:#eef2ff,stroke-width:2px,color:#1e3a8a
     classDef decisionNode stroke:#fb923c,fill:#fff7ed,stroke-width:2px,color:#9a3412
     classDef actionNode stroke:#2dd4bf,fill:#f0fdfa,stroke-width:2px,color:#0f766e
     classDef endNode stroke:#f87171,fill:#fef2f2,stroke-width:2px,color:#b91c1c
-    class Category,RDCert,PAN,FinalDeclaration processNode
+    class Category,RDCert,PANMANDATORY,PANOPTIONAL,FinalDeclaration processNode
     class IncomeTax decisionNode
     class Submit actionNode
     class End endNode</div>
@@ -411,17 +412,17 @@ flowchart TB
     await mermaid.run({querySelector:'.mermaid'});
 
     document.querySelectorAll('.mermaid svg').forEach(svg => {
-      // Lock SVG to its exact intrinsic layout width to standardize physical scale across all phases
+      // Lock SVG to its intrinsic width so fonts are exactly the same size on desktop, 
+      // but let CSS handle responsive constraints.
       const vb = svg.getAttribute('viewBox');
       if (vb) {
         const w = vb.split(' ')[2];
+        // Set an intrinsic width, but allow it to scale down if the screen is tiny.
         svg.style.width = w + 'px';
-        svg.style.minWidth = w + 'px';
-      } else {
-        svg.style.width = 'auto';
+        // We do not hard-lock minWidth to w + 'px' here, because Phase 2 is too wide.
+        // CSS will provide a safe floor (e.g., min-width: 500px).
       }
       svg.style.height = 'auto';
-      svg.style.maxWidth = 'none';
       svg.style.overflow = 'visible';
     });
 
