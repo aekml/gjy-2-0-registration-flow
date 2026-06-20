@@ -172,7 +172,7 @@
     </section>
 
     <section class="overview" aria-label="Flow overview">
-      <details class="overview-panel" open>
+      <details class="overview-panel">
         <summary>
           <div>
             <span class="eyebrow eyebrow--soft">Flow overview</span>
@@ -191,7 +191,7 @@
 
     <div class="grid">
       <section class="card card--accordion" id="identity">
-      <details class="phase-panel" open>
+      <details class="phase-panel">
         <summary class="card-head accordion-head">
         <div>
           <span class="pill">Phase 1</span>
@@ -503,9 +503,23 @@ flowchart TB
       });
     });
 
+    document.querySelectorAll('.phase-panel').forEach(panel => {
+      panel.addEventListener('toggle', () => {
+        if (panel.open) {
+          document.querySelectorAll('.phase-panel').forEach(other => {
+            if (other !== panel) other.open = false;
+          });
+        }
+      });
+    });
+
     document.getElementById('expandAll')?.addEventListener('click', () => {
-      document.querySelectorAll('.phase-panel').forEach(el => el.open = true);
+      const first = document.querySelector('.phase-panel');
+      document.querySelectorAll('.phase-panel').forEach((el, idx) => {
+        el.open = idx === 0;
+      });
       document.querySelectorAll('.diagram-wrap').forEach(el => { el.style.maxHeight = 'none'; });
+      first?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     });
   </script>
 </body>
